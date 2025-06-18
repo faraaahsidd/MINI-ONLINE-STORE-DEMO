@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Your Cart</title>
+  <style>
+    body {
+      background-color: #e6f2ff;
+      font-family: Arial, sans-serif;
+      text-align: center;
+    }
+
+    .cart-item {
+      border: 1px solid #333;
+      padding: 15px;
+      margin: 15px;
+      display: inline-block;
+      width: 250px;
+      background-color: #fff;
+      border-radius: 10px;
+    }
+
+    img {
+      width: 100px;
+      height: 100px;
+      object-fit: contain;
+    }
+
+    .qty-btn {
+      padding: 5px 10px;
+      margin: 0 5px;
+      font-size: 16px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🛒 Your Cart</h1>
+  <div id="cart-list"></div>
+
+  <script>
+     const cartList = document.getElementById('cart-list');
+
+    const cartItems = JSON.parse(localStorage.getItem('cart')) || [];
+   
+
+    if (cartItems.length === 0) {
+      cartList.innerHTML = "<p>Your cart is empty!</p>";
+    } else {
+      cartItems.forEach((item, index) => {
+        const div = document.createElement("div");
+        div.innerHTML = `
+            <img src="${item.image}" width="100" />
+            <h3>${item.title}</h3>
+            <p>Price: $${item.price}</p>
+            <p>
+              Quantity:
+              <button onclick="changeQty(${index}, -1)">-</button>
+              ${item.quantity}
+              <button onclick="changeQty(${index}, 1)">+</button>
+            </p> <hr/>
+        `;
+        cartList.appendChild(div);
+      });
+    }
+
+    function changeQty(index, change) {
+      
+      cartItems[index].quantity += change;
+
+      if (cart[index].quantity <= 0) {
+        cartItems.splice(index, 1); // remove item
+      }
+
+      localStorage.setItem("cart", JSON.stringify(cart));
+      location.reload(); // refresh to see changes
+    }
+  </script>
+
+</body>
+</html>
