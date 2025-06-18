@@ -1,80 +1,91 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Your Cart</title>
-  <style>
-    body {
-      background-color: #e6f2ff;
-      font-family: Arial, sans-serif;
-      text-align: center;
-    }
-
-    .cart-item {
-      border: 1px solid #333;
-      padding: 15px;
-      margin: 15px;
-      display: inline-block;
-      width: 250px;
-      background-color: #fff;
-      border-radius: 10px;
-    }
-
-    img {
-      width: 100px;
-      height: 100px;
-      object-fit: contain;
-    }
-
-    .qty-btn {
-      padding: 5px 10px;
-      margin: 0 5px;
-      font-size: 16px;
-    }
-  </style>
-</head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>MINI ONLINE STORE</title>
+	<style>
+		body
+		{
+			background-color: #c4e5f6;
+		}
+		#product-list div
+		{
+			 display: block;
+			 text-align: center;
+             padding: 10px;
+             width: 300px;
+             border-radius: 8px;
+             left: 10in;
+		}
+		#product-list
+		{
+			display: flex;
+			flex-wrap: wrap;
+			justify-content: center;
+			gap: 20px;
+		}
+		button
+		{
+			background-color: #1676a7;
+			border-radius: 5px;
+			transition: background-color 0.5s;
+		}
+		button:hover
+		{
+			background-color: #0f587d;
+			cursor: pointer;
+		}
+	</style>
+</head> 
 <body>
+   <center>
+   	<h1>MINI ONLINE STORE</h1>
+     <button onclick="gotoCart()">🛒</button>
+   </center>
 
-  <h1>🛒 Your Cart</h1>
-  <div id="cart-list"></div>
+    <div id="product-list" ></div>
 
-  <script>
-     const cartList = document.getElementById('cart-list');
+    <script>
+    	const container = document.getElementById("product-list");
 
-    const cartItems = JSON.parse(localStorage.getItem('cart')) || [];
-   
+    	fetch("https://fakestoreapi.com/products")
+    	.then(res => res.json())
+    	.then(products => {
+    		products.forEach (p => {
+    		container.innerHTML += `
+    		<div style="border: 1px solid #821322; padding: 10px;"> 
+    		<img src="${p.image}" alt="${p.title}" width="200" />
+    		<h3> ${p.title}</h3>
+    		<p>price:${p.price}</p>
+    		<button onclick='addToCart(${JSON.stringify(p)})'> ADD TO CART </button><br>
+            <button onclick="alert('${p.description}')"> View Details </button>
+    		</div>
+    		`;
+    	});
+    	});
 
-    if (cartItems.length === 0) {
-      cartList.innerHTML = "<p>Your cart is empty!</p>";
-    } else {
-      cartItems.forEach((item, index) => {
-        const div = document.createElement("div");
-        div.innerHTML = `
-            <img src="${item.image}" width="100" />
-            <h3>${item.title}</h3>
-            <p>Price: $${item.price}</p>
-            <p>
-              Quantity:
-              <button onclick="changeQty(${index}, -1)">-</button>
-              ${item.quantity}
-              <button onclick="changeQty(${index}, 1)">+</button>
-            </p> <hr/>
-        `;
-        cartList.appendChild(div);
-      });
-    }
+    	function gotoCart()
+    	 {
+    		window.location.href="practicecart.html"; 
+    	 }
 
-    function changeQty(index, change) {
-      
-      cartItems[index].quantity += change;
+    		function addToCart(product)
+    		{
+    			let cart = JSON.parse(localStorage.getItem('cart')) || [];
 
-      if (cart[index].quantity <= 0) {
-        cartItems.splice(index, 1); // remove item
-      }
+    			const existingProduct = cart.find(item => item.id === product.id);
 
-      localStorage.setItem("cart", JSON.stringify(cart));
-      location.reload(); // refresh to see changes
-    }
-  </script>
+    			if (existingProduct)
+    			{
+    				existingProduct.quantity += 1;
+    				cart.push(product);
+    			}
 
+    			localStorage.setItem('cart', JSON.stringify(cart));
+    			alert('"${product.title}" added to cart!');
+    		}
+    	
+    </script>
 </body>
 </html>
